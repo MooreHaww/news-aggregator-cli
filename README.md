@@ -96,8 +96,6 @@ Both were fixed and are now covered by tests.
 
 ## What I learned
 
-*(Draft, to be edited.)*
-
 - I learned how RSS feeds work and how to parse them with `feedparser` instead of scraping web pages.
 - I added a cache with a time limit so repeat runs are fast and I don't hit the feeds every time.
 - Different sources often carry the same story, so I had to remove duplicates by URL and by title.
