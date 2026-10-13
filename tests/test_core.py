@@ -40,6 +40,15 @@ def test_filter_sort_limit():
     assert len(limit(arts, 1)) == 1
 
 
+def test_filter_matches_whole_words_only():
+    arts = [A("Britain said it was a fair deal", "u1"), A("Selma Blair accused", "u2"),
+            A("New AI model released", "u3"), A("Why ai matters", "u4"),
+            A("Startup builds A.I. chips", "u5", summary="ai-powered tools"),
+            A("C++ and .NET news", "u6")]
+    assert [a.url for a in filter_topics(arts, ["ai"])] == ["u3", "u4", "u5"]
+    assert [a.url for a in filter_topics(arts, ["C++"])] == ["u6"]
+
+
 def test_cache_ttl(tmp_path):
     arts = [A("T", "u", datetime(2024, 1, 1, tzinfo=timezone.utc))]
     cache.save("s", arts, tmp_path)
