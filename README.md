@@ -1,5 +1,7 @@
 # newsfeed
 
+![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue) ![MIT License](https://img.shields.io/badge/license-MIT-green)
+
 A command-line news reader that pulls headlines from several RSS feeds into one clean terminal feed. No API keys needed.
 
 ![newsfeed demo](docs/demo.png)
@@ -79,7 +81,37 @@ Each source's public RSS feed is downloaded with `requests` (in parallel) and pa
 
 ## Performance
 
-A fresh fetch of all four feeds takes about 1.162927 seconds. A cached fetch takes about 0.2842921 seconds, roughly 4x faster.
+A fresh fetch of all four feeds takes about 1.2 seconds. A cached fetch takes about 0.3 seconds, roughly 4x faster.
+
+## Process
+
+I planned the project in plan mode with Claude Code, then built it step by step, manually approving every edit. I tested it myself in a terminal.
+
+Testing turned up two bugs:
+
+- The topic filter matched "ai" inside words like "said".
+- The Hacker News summaries showed raw text.
+
+Both were fixed and are now covered by tests.
+
+## What I learned
+
+*(Draft, to be edited.)*
+
+- I learned how RSS feeds work and how to parse them with `feedparser` instead of scraping web pages.
+- I added a cache with a time limit so repeat runs are fast and I don't hit the feeds every time.
+- Different sources often carry the same story, so I had to remove duplicates by URL and by title.
+- Filtering by topic is harder than it looks: matching "ai" inside "said" showed me why whole-word matching matters.
+- I tested against saved sample data so the tests run offline and give the same result every time.
+- I packaged the project with `pyproject.toml` so it installs with `pip` and gives a `newsfeed` command.
+- I pushed it to GitHub and wrote a README so other people can install and use it.
+
+## Future improvements
+
+- **Category filters:** filter by section (world, tech, business) instead of only by keyword.
+- **Config file for custom sources:** add or remove feeds in a user config file instead of editing `sources.py`.
+- **SQLite cache:** replace the JSON files with a SQLite database to keep history and make lookups easier.
+- **`--since` flag:** show only articles published after a given time, e.g. `--since 2h`.
 
 ## Running the tests
 
