@@ -25,6 +25,26 @@ def test_parse_feed():
     assert arts[0].summary == "About chips"
 
 
+HN_RSS = b"""<?xml version="1.0"?><rss version="2.0"><channel><title>HN</title>
+<item><title>Cool post</title><link>https://ex.com/post</link>
+<comments>https://news.ycombinator.com/item?id=1</comments>
+<description>&lt;p&gt;Article URL: &lt;a href="https://ex.com/post"&gt;https://ex.com/post&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Comments URL: &lt;a href="https://news.ycombinator.com/item?id=1"&gt;https://news.ycombinator.com/item?id=1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Points: 296&lt;/p&gt;&lt;p&gt;# Comments: 240&lt;/p&gt;</description></item>
+<item><title>Tiny</title><link>https://ex.com/t</link>
+<description>Article URL: https://ex.com/t
+Comments URL: https://news.ycombinator.com/item?id=2
+Points: 1
+# Comments: 0</description></item></channel></rss>"""
+
+
+def test_hn_summary_is_cleaned():
+    a, b = parse_feed(HN_RSS, "hn")
+    assert a.summary == "296 points · 240 comments"
+    assert a.url == "https://ex.com/post"
+    assert b.summary == "1 point · 0 comments"
+
+
 def test_dedupe_by_url_and_title():
     out = dedupe([A("Hello World", "https://www.a.com/x/?u=1"), A("Other", "http://a.com/x"),
                   A("hello, world!", "http://b.com/y"), A("New", "http://c.com/z")])
