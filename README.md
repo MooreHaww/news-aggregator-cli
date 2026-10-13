@@ -85,7 +85,7 @@ A fresh fetch of all four feeds takes about 1.2 seconds. A cached fetch takes ab
 
 ## Process
 
-I planned the project in plan mode with Claude Code, then built it step by step, manually approving every edit. I tested it myself in a terminal.
+I planned the project's architecture first, then built it step by step, carefully reviewing each module. I tested it manually in a terminal.
 
 Testing turned up two bugs:
 
