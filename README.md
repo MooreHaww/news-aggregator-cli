@@ -2,6 +2,8 @@
 
 Pull headlines from several RSS feeds (BBC, NYT, Guardian, Hacker News), dedupe, cache and filter them, and print a clean feed in your terminal. No API keys.
 
+![newsfeed demo](docs/demo.png.png)
+
 ```
 pip install .
 newsfeed sources
