@@ -1,39 +1,65 @@
-# newsfeed
+<div align="center">
 
-![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue) ![MIT License](https://img.shields.io/badge/license-MIT-green)
+# 📰 newsfeed
 
-A command-line news reader that pulls headlines from several RSS feeds into one clean terminal feed. No API keys needed.
+**Every headline you care about, in one clean terminal feed. No API keys, no tabs, no scrolling through five sites.**
+
+![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![MIT License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
+![Release](https://img.shields.io/github/v/release/MooreHaww/news-aggregator-cli?style=for-the-badge&color=orange)
+![No API keys](https://img.shields.io/badge/API%20keys-none-success?style=for-the-badge)
+![Built with](https://img.shields.io/badge/built%20with-Typer%20%7C%20Rich-8A2BE2?style=for-the-badge)
 
 ![newsfeed demo](docs/demo.png)
 
-## Why this exists
+</div>
 
-Checking many news sites for the same topic takes time. `newsfeed` fetches BBC, NYT, The Guardian and Hacker News in one go, removes duplicates, and shows you a single list you can filter by topic.
+---
 
-It was built as a first finished project in a larger build plan, to practise RSS/API handling, caching, testing and packaging.
+## 💡 Why this project exists
 
-## Features
+Checking many news sites for the same topic takes time. `newsfeed` fetches BBC, NYT, The Guardian and Hacker News in one go, removes duplicates, and shows a single list you can filter by topic.
 
-- Multiple sources: BBC, NYT, The Guardian, Hacker News
-- Duplicate removal (same URL or same title)
-- 15-minute on-disk cache
-- Topic filter that matches whole words, case-insensitive
-- Clean Rich terminal output with clickable titles
-- No API keys
+It is **project #1** of my build plan: a small tool I could finish in a week, to practise RSS handling, caching, testing and packaging, and to get a first complete repo onto GitHub.
 
-## Install
+## 🔎 What it does
+
+- 📡 **Multiple sources:** BBC, NYT, The Guardian and Hacker News
+- 🧹 **Duplicate removal:** the same story from two sources shows once (same URL or same title)
+- ⚡ **15-minute cache:** repeat runs are about 4× faster
+- 🎯 **Topic filter:** whole-word, case-insensitive matching
+- 🎨 **Clean Rich output:** clickable titles, source labels, "published X ago", and points and comments for Hacker News
+- 🔑 **No API keys**
+
+Newest headlines come first. Flags combine freely: `newsfeed fetch -s guardian -t ai -n 10 --refresh`.
+
+| Command / flag | What it does | Example |
+| --- | --- | --- |
+| `newsfeed fetch` | Fetch all sources and print the latest 20 headlines | `newsfeed fetch` |
+| `-t`, `--topic TEXT` | Keep items whose title or summary contains this whole word. Repeat for any-of | `newsfeed fetch -t climate -t energy` |
+| `-s`, `--source NAME` | Use only `bbc`, `nyt`, `guardian` or `hn`. Unknown names exit with code 2 | `newsfeed fetch -s bbc -s hn` |
+| `-n`, `--limit N` | Maximum items to show (default 20) | `newsfeed fetch -n 5` |
+| `--refresh` | Ignore the cache and download again | `newsfeed fetch --refresh` |
+| `newsfeed sources` | List source names and feed URLs | `newsfeed sources` |
+| `--version` | Print the installed version | `newsfeed --version` |
+
+If nothing matches it prints `No articles found.` If one feed is unreachable, a warning is shown and the other sources still print.
+
+**Measured:** a fresh fetch of all four feeds takes about **1.2 s**; a cached fetch about **0.3 s**.
+
+## ⚙️ Setup
 
 Requires Python 3.9 or newer.
 
-**(a) Directly from GitHub:**
+**Directly from GitHub**
 
-```
+```bash
 pip install git+https://github.com/MooreHaww/news-aggregator-cli.git
 ```
 
-**(b) From a clone, Windows (PowerShell):**
+**From a clone (Windows PowerShell)**
 
-```
+```powershell
 git clone https://github.com/MooreHaww/news-aggregator-cli.git
 cd news-aggregator-cli
 python -m venv .venv
@@ -41,9 +67,9 @@ python -m venv .venv
 pip install .
 ```
 
-**(b) From a clone, Mac/Linux:**
+**From a clone (Mac / Linux)**
 
-```
+```bash
 git clone https://github.com/MooreHaww/news-aggregator-cli.git
 cd news-aggregator-cli
 python3 -m venv .venv
@@ -51,78 +77,16 @@ source .venv/bin/activate
 pip install .
 ```
 
-Check it worked: `newsfeed --version`
+Check it worked: `newsfeed --version`, then run `newsfeed fetch`.
 
-## Usage
+**Run the tests** (they run offline):
 
-Newest headlines come first. Each item shows the source in brackets, a clickable title, how long ago it was published, and a short summary. Hacker News items show points and comments instead, e.g. `296 points · 240 comments`.
-
-| Command / flag | What it does | Example |
-| --- | --- | --- |
-| `newsfeed fetch` | Fetch all sources and print the latest 20 headlines. | `newsfeed fetch` |
-| `-t`, `--topic TEXT` | Keep only items whose title or summary contains this whole word. Repeat to match any of several. | `newsfeed fetch -t climate -t energy` |
-| `-s`, `--source NAME` | Use only this source: `bbc`, `nyt`, `guardian`, `hn`. Repeat for several. An unknown name prints an error and exits with code 2. | `newsfeed fetch -s bbc -s hn` |
-| `-n`, `--limit N` | Maximum number of items to show (default 20). | `newsfeed fetch -n 5` |
-| `--refresh` | Ignore the cache and download the feeds again. | `newsfeed fetch --refresh` |
-| `newsfeed sources` | List the available source names and feed URLs. | `newsfeed sources` |
-| `--version` | Print the installed version, e.g. `0.1.0`. | `newsfeed --version` |
-
-Flags combine: `newsfeed fetch -s guardian -t ai -n 10 --refresh`.
-
-If nothing matches, it prints `No articles found.` If a feed can't be reached, a warning is shown and the other sources still print.
-
-## Is it a library?
-
-No. It is a command-line tool meant to be run, not imported. Internally the code is split into small modules (`fetcher.py`, `dedupe.py`, `filters.py`, `cache.py`, `render.py`) under `src/newsfeed/`, so they can be reused in other scripts, but there is no stable public API.
-
-## How it works
-
-Each source's public RSS feed is downloaded with `requests` (in parallel) and parsed with `feedparser` into simple `Article` objects. Each feed is cached as JSON for 15 minutes. The articles are then merged, sorted newest first, de-duplicated by URL and title, filtered by topic, trimmed to the limit, and printed with Rich.
-
-## Performance
-
-A fresh fetch of all four feeds takes about 1.2 seconds. A cached fetch takes about 0.3 seconds, roughly 4x faster.
-
-## Process
-
-I planned the project's architecture first, then built it step by step, carefully reviewing each module. I tested it manually in a terminal.
-
-Testing turned up two bugs:
-
-- The topic filter matched "ai" inside words like "said".
-- The Hacker News summaries showed raw text.
-
-Both were fixed and are now covered by tests.
-
-## What I learned
-
-- I learned how RSS feeds work and how to parse them with `feedparser` instead of scraping web pages.
-- I added a cache with a time limit so repeat runs are fast and I don't hit the feeds every time.
-- Different sources often carry the same story, so I had to remove duplicates by URL and by title.
-- Filtering by topic is harder than it looks: matching "ai" inside "said" showed me why whole-word matching matters.
-- I tested against saved sample data so the tests run offline and give the same result every time.
-- I packaged the project with `pyproject.toml` so it installs with `pip` and gives a `newsfeed` command.
-- I pushed it to GitHub and wrote a README so other people can install and use it.
-
-## Future improvements
-
-- **Category filters:** filter by section (world, tech, business) instead of only by keyword.
-- **Config file for custom sources:** add or remove feeds in a user config file instead of editing `sources.py`.
-- **SQLite cache:** replace the JSON files with a SQLite database to keep history and make lookups easier.
-- **`--since` flag:** show only articles published after a given time, e.g. `--since 2h`.
-
-## Running the tests
-
-```
+```bash
 pip install -e ".[dev]"
 pytest
 ```
 
-The tests run offline.
-
-## Adding your own source
-
-Sources are listed in `src/newsfeed/sources.py`. Add a name and an RSS/Atom URL:
+**Add your own source:** edit `src/newsfeed/sources.py`, add a name and an RSS or Atom URL, then use `newsfeed fetch -s <name>`:
 
 ```python
 DEFAULT_SOURCES = {
@@ -131,4 +95,54 @@ DEFAULT_SOURCES = {
 }
 ```
 
-Then run `newsfeed sources` to see it, and `newsfeed fetch -s verge` to use it. (Reinstall with `pip install .` unless you installed with `-e`.)
+(Reinstall with `pip install .` unless you installed with `-e`.)
+
+## 🎯 What I wanted to learn
+
+- How RSS feeds work and how to read them with `feedparser` instead of scraping web pages.
+- How to add a **time-limited cache** so repeat runs are fast and feeds are not hit every time.
+- How to merge sources: different outlets carry the same story, so duplicates must be removed by URL and by title.
+- Why **filtering is harder than it looks**: matching "ai" inside "said" showed me why whole-word matching matters.
+- How to write **offline tests** against saved sample data, so results are the same every time.
+- How to **package a Python project** so `pip install` gives a real command (`newsfeed`).
+- How to finish a project properly: README, tests, tag, and a repo others can run.
+
+## 🏗️ How it was built
+
+I planned the architecture first, then built it module by module, reviewing each one and testing it by hand in a terminal.
+
+```text
+src/newsfeed/
+├── sources.py   # feed names and URLs
+├── fetcher.py   # download feeds in parallel (requests) and parse them (feedparser)
+├── models.py    # the simple Article object
+├── cache.py     # JSON cache with a 15-minute expiry
+├── dedupe.py    # remove duplicates by URL and title
+├── filters.py   # whole-word topic filter
+├── render.py    # Rich terminal output
+└── cli.py       # Typer commands and flags
+```
+
+**Pipeline:** download each feed → parse into `Article` objects → cache as JSON → merge → sort newest first → de-duplicate → filter by topic → trim to the limit → print with Rich.
+
+**Bugs found while testing, now covered by tests**
+
+- The topic filter matched "ai" inside words like "said".
+- Hacker News summaries showed raw text instead of clean text.
+
+It is a command-line tool rather than a library. The modules are small and reusable, but there is no stable public API.
+
+## 🗺️ Plan / what's next
+
+- [x] Four sources with duplicate removal
+- [x] On-disk cache and topic filter
+- [x] Offline tests and `pip` packaging
+- [x] Tagged `v0.1.0`
+- [ ] **Category filters:** filter by section (world, tech, business), not only by keyword
+- [ ] **Config file for custom sources**, instead of editing `sources.py`
+- [ ] **SQLite cache** to keep history and make lookups easier
+- [ ] **`--since` flag**, e.g. `--since 2h`
+
+## 📄 License
+
+MIT. See [`LICENSE`](LICENSE).
