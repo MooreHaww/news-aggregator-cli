@@ -20,10 +20,12 @@ def _ago(dt: Optional[datetime]) -> str:
     return f"{secs // 86400}d ago"
 
 
-def render(articles: Sequence[Article], console: Optional[Console] = None) -> None:
+def render(articles: Sequence[Article], console: Optional[Console] = None, searched: bool = False) -> None:
     console = console or Console()
     if not articles:
         console.print("[yellow]No articles found.[/yellow]")
+        if searched:
+            console.print("Try another keyword, or remove -t to see everything.", style="dim")
         return
     for a in articles:
         head = Text()

@@ -23,9 +23,24 @@ def _version(value: bool):
         raise typer.Exit()
 
 
-@app.callback()
-def main(version: bool = typer.Option(False, "--version", callback=_version, is_eager=True)):
-    pass
+WELCOME = """Welcome to newsfeed: headlines from several news sites in one list.
+
+Try these:
+  newsfeed sources                  see the available sources
+  newsfeed fetch -n 5               show the 5 newest headlines
+  newsfeed fetch -t football -n 5   only headlines about "football"
+
+-t is optional. It is a keyword you type yourself: replace football with any word.
+Run newsfeed --help for all options."""
+
+
+@app.callback(invoke_without_command=True)
+def main(
+    ctx: typer.Context,
+    version: bool = typer.Option(False, "--version", callback=_version, is_eager=True),
+):
+    if ctx.invoked_subcommand is None:
+        typer.echo(WELCOME)
 
 
 def _get(name: str, refresh: bool):
@@ -60,7 +75,9 @@ def fetch(
     articles = [a for batch in results for a in batch]
     articles = dedupe(sort_newest(articles))
     articles = limit_articles(filter_topics(articles, topic or []), limit)
-    render(articles)
+    render(articles, searched=bool(topic))
+    if articles and not topic:
+        err.print("Tip: filter by topic with newsfeed fetch -t football", style="dim", markup=False)
 
 
 @app.command()
