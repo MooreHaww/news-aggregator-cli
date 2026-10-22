@@ -49,9 +49,17 @@ If nothing matches it prints `No articles found.` If one feed is unreachable, a 
 
 ## ⚙️ Setup
 
-Requires Python 3.9 or newer.
+Requires Python 3.9 or newer. Check yours with:
 
-**Directly from GitHub**
+```bash
+python --version
+```
+
+(On Mac / Linux you may need `python3 --version`. If it is older than 3.9 or not found, install Python from [python.org](https://www.python.org/downloads/) first.)
+
+There are two ways to get the code: **Clone** copies the project with its full history and needs Git, while **Download ZIP** gives you just the files and needs no Git. Both lead to the same next steps.
+
+**Directly from GitHub** (needs Git)
 
 ```bash
 pip install git+https://github.com/MooreHaww/news-aggregator-cli.git
@@ -77,7 +85,56 @@ source .venv/bin/activate
 pip install .
 ```
 
+**No Git? Download ZIP instead.** On the GitHub page click the green **Code** button, then **Download ZIP**, unzip it, and open a terminal inside the unzipped folder (it may be called `news-aggregator-cli-main`). Then run the same commands as above, starting from the `python -m venv .venv` line (`python3 -m venv .venv` on Mac / Linux).
+
 Check it worked: `newsfeed --version`, then run `newsfeed fetch`.
+
+## ▶️ Running it
+
+Every time you open a **new terminal**, go into the project folder and activate the venv again, otherwise the `newsfeed` command won't be found.
+
+**Windows (PowerShell)**
+
+```powershell
+cd path\to\news-aggregator-cli
+.venv\Scripts\Activate.ps1
+newsfeed fetch
+```
+
+**Mac / Linux**
+
+```bash
+cd path/to/news-aggregator-cli
+source .venv/bin/activate
+newsfeed fetch
+```
+
+`(.venv)` at the start of your prompt means the venv is active.
+
+## 🚀 Your first run
+
+```bash
+newsfeed sources
+newsfeed fetch -n 5
+newsfeed fetch -t football -n 5
+```
+
+1. `newsfeed sources` lists the available sources.
+2. `newsfeed fetch -n 5` shows the 5 newest headlines from all sources.
+3. `newsfeed fetch -t football -n 5` shows the 5 newest headlines that mention "football".
+
+`-t` is optional. It is a keyword you type yourself: swap `football` for any word, such as `climate` or `ai`. Leave it out to see everything.
+
+## 🛠️ Troubleshooting
+
+- **`newsfeed is not recognized` (or `command not found`):** the venv isn't activated in this terminal. Go into the project folder and run `.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate` (Mac / Linux).
+- **PowerShell blocks the activate script:** allow local scripts for your user once, then activate again:
+
+  ```powershell
+  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+  ```
+
+- **`make` / Makefile:** this project has none. Use the `pip` and `newsfeed` commands shown above.
 
 **Run the tests** (they run offline):
 
